@@ -123,8 +123,8 @@ EXTRA:
 
 ## Hipervinculos a archivos importantes dentro del proyecto
 
-- [Estructura basica de los archivos de excel de ingesta]()
-- [Estandares de outputs de los distintos modulos]() 
+- [Formato basico de los archivos .csv de ingesta]()
+- [Estructura de los inputs y ouputs de los modulos]() 
 
 ## Tutoriales, articulos, documentacion relevante
 
