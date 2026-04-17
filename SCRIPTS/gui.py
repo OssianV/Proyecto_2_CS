@@ -91,7 +91,7 @@ class ProgramaGui:
             self._create_window()
 
             # Text label
-            title_label = tk.Label(self.root, text="Bienvenido a lorem ipsum", font=FONT_TITLE)
+            title_label = tk.Label(self.root, text="Bienvenido al programa de analisis de estados financieros", font=FONT_TITLE, justify="center", foreground="#000000", background="#7A797C", border=20)
             info_label = tk.Label(self.root, text="Info lorem ipsum", font=FONT_BODY)
 
             # Botones
