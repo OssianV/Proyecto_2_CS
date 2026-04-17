@@ -1,12 +1,7 @@
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 from tkinter import messagebox
-import logging
 from typing import Optional, Dict, Callable
-
-# Configuramos logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Constantes
 FONT_TITLE = ("Century Gothic", 12, "bold")
@@ -57,7 +52,6 @@ class ProgramaGui:
 
     def _show_error(self, message: str) -> None:
         """Muestra mensaje de error al usuario"""
-        logger.error(message)    # No se que hace esto, lo saque de internet
         messagebox.showerror("Error", message)
     
     def _show_info(self, title: str, message: str) -> None:
@@ -114,7 +108,6 @@ class ProgramaGui:
             self.root.mainloop()
         except Exception as e:
             self._show_error(f"Error en la ventana inicial: {str(e)}")
-            logger.exception("Excepcion en la ventana de ingesta de csv")
 
     def results_window(self) -> None:
         """Visualizacion de resultados"""
@@ -141,7 +134,6 @@ class ProgramaGui:
             self.root.mainloop()
         except Exception as e:
             self._show_error(f"Error en la ventana de resultados: {str(e)}")
-            logger.exception("Excepcion en la ventana de resultados")
 
     def dashboard_window(self) -> None:
         """Ventana temporal - Representa la ventana del dashboard (no implementado aun)"""
@@ -157,7 +149,6 @@ class ProgramaGui:
             self.root.mainloop()
         except Exception as e:
             self._show_error(f"Error en la ventana del dashboard: {str(e)}")
-            logger.exception("Error en la ventana del dashboard")
 
     def get_paths(self) -> tuple:
         """Get file paths for processing by other modules"""
