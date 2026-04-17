@@ -17,7 +17,7 @@ test_results = {
 
 if __name__ == "__main__":
     app = ProgramaGui(results_dict=test_results)
-    app.start_window()
+    app.welcome_window()
     
     # After app closes, you can access the paths:
     bg_path, er_path = app.get_paths()

@@ -84,6 +84,31 @@ class ProgramaGui:
             return "No hay datos disponibles"
         return "\n".join(f"{key}: {value}" for key, value in data.items())
     
+    def welcome_window(self) -> None:
+        """Ventana de bienvenida al usuario, con titulo, informacion relevante y opcion para abrir el manual de usuario"""
+        try:
+            
+            self._create_window()
+
+            # Text label
+            title_label = tk.Label(self.root, text="Bienvenido a lorem ipsum", font=FONT_TITLE)
+            info_label = tk.Label(self.root, text="Info lorem ipsum", font=FONT_BODY)
+
+            # Botones
+            next_button = tk.Button(self.root, text="Siguiente", command=self.start_window, font=FONT_BODY)
+            user_manual_button = tk.Button(self.root, text="Manual de usuario", command=None, font=FONT_BODY)
+            
+            # Widget positioning
+            title_label.grid(row=0, column=0, columnspan=4, padx=30, pady=20)
+            info_label.grid(row=1, column=0, columnspan=3, padx=30, pady=50)
+            user_manual_button.grid(row=2, column=1, columnspan=2, padx=20, pady=15)
+            next_button.grid(row=3, column=3, padx=15, pady=10)
+
+            self.root.mainloop()
+
+        except Exception as e:
+            self._show_error(f"Ocurrio un error en la ventana de bienvenida: {str(e)}")
+
     def start_window(self) -> None:
         """Ventana INICIAL - Donde el usuario ingresa los archivos .csv de los estados financieros"""
         try:
@@ -98,12 +123,14 @@ class ProgramaGui:
             bg_button = tk.Button(self.root, text="Selecciona el csv del Balance General", command=lambda: self._select_csv_file("BG"), font = FONT_BODY)
             er_button = tk.Button(self.root, text="Selecciona el csv del Estado de Resultados", command=lambda: self._select_csv_file("ER"), font = FONT_BODY)
             next_button = tk.Button(self.root, text="Siguiente", command=self.results_window, font=FONT_BODY)
-            
+            back_button = tk.Button(self.root, text="Regresar", command=self.welcome_window, font=FONT_BODY)
+
             # Posicionamiento de widgets
             title_label.grid(row=0, column=0, columnspan=4, padx=20, pady=20)
             bg_button.grid(row=1, column=1, padx=10, pady=20)
             er_button.grid(row=1, column=3, padx=10, pady=20)
             next_button.grid(row=3, column=3, padx=15, pady=10)
+            back_button.grid(row=3, column=0, padx=15, pady=10)
 
             self.root.mainloop()
         except Exception as e:
