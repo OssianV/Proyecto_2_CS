@@ -8,6 +8,8 @@ from typing import Dict, Optional
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import OUTLINE, PRIMARY, SECONDARY, WARNING
 
+from dashboard import build_dashboard
+
 # Fuentes del texto de la GUI
 FONT_HEADER = ("Segoe UI Semibold", 18)
 FONT_TITLE = ("Segoe UI Semibold", 13)
@@ -70,8 +72,8 @@ class ProgramaGui:
         # ahora se define una unica ventana como atributo de la clase, junto con sus caracteristicas
         # de apariencia. En las funciones de ventanas ahora solo se borraran los widgets, no la ventana.
         self.root: tk.Tk = ttk.Window(themename="cosmo")    # Se define el atributo .root como una ventana de ttk (la raiz)
-        self.root.geometry("920x560")    # Tamano inicial
-        self.root.minsize(820, 500)    # Tamano minimo
+        self.root.geometry("920x600")    # Tamano inicial
+        self.root.minsize(820, 600)    # Tamano minimo
         
         self.chosen_analysis_text = tk.StringVar()
         self.bg_file_var: Optional[tk.StringVar] = None
@@ -219,7 +221,7 @@ class ProgramaGui:
         """Ventana de bienvenida al usuario."""
         try:
             # Configurar ventana
-            content = self._build_window_shell("Bienvenida", "Análisis de estados financieros", "Proyecto escolar con una interfaz más limpia, manteniendo la lógica actual.")
+            content = self._build_window_shell("Bienvenida", "Análisis de estados financieros", "Mini-app para calcular algunas razones financieras y generar un dashboard.")
 
             # Congifurar grid() de la ventana: Define 4 columnas en el frame content, se expanden horizontalmente.
             # Si sobra espacio horizontal, se reparte equitativamente entre todas la columnas.
@@ -231,15 +233,11 @@ class ProgramaGui:
             # Text widgets
             title_label = ttk.Label(content, text="Bienvenido al programa")
             info_label = ttk.Label(content,
-                text=(
-                    "Esta versión mantiene tu flujo de navegación por ventanas, "
-                    "pero mejora la jerarquía visual con un encabezado, tarjeta central, "
-                    "tipografía moderna y botones con estilo consistente."
-                ),
+                text=("Para ver como usar efectivamente esta mini-app, por favor presiona el boton 'Manual de usuario'."),
                 justify="left",
                 wraplength=760,
             )
-            manual_note = ttk.Label(content, text="El botón de manual puede conectarse después con un PDF o una ventana de ayuda.", justify="left")
+            manual_note = ttk.Label(content, text="Presiona 'Siguiente' para avanzar cuando estes listo.", justify="left")
 
             # Separator widgets
             separator = ttk.Separator(content, orient="horizontal")
@@ -282,7 +280,7 @@ class ProgramaGui:
 
             # Crear titulo y subtitulo
             ttk.Label(content, text="Archivos requeridos").grid(row=0, column=0, columnspan=2, sticky="w")
-            ttk.Label(content, text="La lógica de carga se mantiene igual; aquí solo cambia la presentación.", wraplength=760, justify="left").grid(row=1, column=0, columnspan=2, sticky="w", pady=(6, 16))
+            ttk.Label(content, text="Un archivo .csv para el Balance General y el Estado de Resultados es necesario.", wraplength=760, justify="left").grid(row=1, column=0, columnspan=2, sticky="w", pady=(6, 16))
 
             # Definimos los atributos asociados a los path de los archivos seleccionados (al inicio seran "Ningún archivo seleccionado")
             self.bg_file_var = tk.StringVar(value=self._selected_file_text(self.state.bg_csv_path))
@@ -342,7 +340,7 @@ class ProgramaGui:
             content = self._build_window_shell(
                 "Resultados",
                 "Razones financieras calculadas",
-                "La misma información ahora se presenta en una tabla más legible.",
+                "Aquí se muestran los valores de las razones calculadas.",
             )
 
             # Configurar grid
@@ -352,7 +350,7 @@ class ProgramaGui:
 
             # Crear titulo y subtitulo
             ttk.Label(content, text="Resultados del cálculo").grid(row=0, column=0, columnspan=4, sticky="w")
-            ttk.Label(content, text="Se usa el mismo diccionario de resultados, solo cambia el formato visual.", wraplength=760, justify="left").grid(row=1, column=0, columnspan=4, sticky="w", pady=(6, 16))
+            ttk.Label(content, text="Selecciona la categoría de las razones.", wraplength=760, justify="left").grid(row=1, column=0, columnspan=4, sticky="w", pady=(6, 16))
 
             # Crear contenedor de resultados
             table_border = tk.Frame(content)
@@ -394,19 +392,25 @@ class ProgramaGui:
             self._show_error(f"Error en la ventana de resultados: {str(e)}")
 
     def dashboard_window(self) -> None:
-        """Ventana temporal - representa el dashboard (no implementado aun)."""
+        """Construye la ventana del dashboard usando el modulo dashboard.py"""
         try:
-            content = self._build_window_shell("Dashboard", "Dashboard", "Vista temporal mientras se implementa la parte gráfica final.")
+            content = self._build_window_shell("Dashboard", "Dashboard", "Visualización de los resultados del calculo de las razones financieras.")
 
-            for col in range(2):
-                content.columnconfigure(col, weight=1)
+            content.columnconfigure(0, weight=1)
+            content.rowconfigure(0, weight=1)
 
-            ttk.Label(content, text="Dashboard", style="Title.TLabel").grid(row=0, column=0, columnspan=2, sticky="w")
+            dashboard_frame = ttk.Frame(content)
+            dashboard_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 16))
 
-            ttk.Label(content, text="No implementado aún.", style="Body.TLabel").grid(row=1, column=0, columnspan=2, sticky="w", pady=(8, 24))
+            build_dashboard(dashboard_frame, self.state.results)
 
-            back_button = ttk.Button(content, text="Regresar", command=self.results_window, bootstyle=(SECONDARY, OUTLINE))
-            back_button.grid(row=2, column=0, sticky="w")
+            back_button = ttk.Button(
+                content,
+                text="Regresar",
+                command=self.results_window,
+                bootstyle=(SECONDARY, OUTLINE),
+            )
+            back_button.grid(row=1, column=0, sticky="w")
 
         except Exception as e:
             self._show_error(f"Error en la ventana del dashboard: {str(e)}")
