@@ -14,18 +14,18 @@ FONT_TITLE = ("Segoe UI Semibold", 13)
 FONT_BODY = ("Segoe UI", 10)
 FONT_SMALL = ("Segoe UI", 9)
 
-# Paleta de colores de la GUI
-COLORS = {
-    "navy": "#0F172A",
-    "gold": "#D4A017",
-    "yellow": "#FACC15",
-    "white": "#FFFFFF",
-    "off_white": "#F8FAFC",
-    "black": "#111827",
-    "muted": "#64748B",
-    "border": "#E5E7EB",
-}
+# Funciones temporales - representan funciones que se importaran de otros modulos no hechos
 
+# Esta funcion es para probar la implementacion de la validacion en la GUI
+def csv_validation(bg_path: str, er_path: str) -> Dict:
+    return {"BG": (True, "El balance general no respeta la ecuacion contable A=P+C\nEl balance general no respeta regla 1\nEl balance general no respeta regla 2\n"), "ER": (True, "")}
+
+# Esta funcion es para hacer los analisis automaticos de las razones financieras
+def auto_analysis(results_dict: dict) -> Dict:
+    return {"Razones de solvencia": "Tal y cual razon de solvencia esta muy alta\nTal y cual muy baja\nTal y cual en valores sanos para una aseguradora",
+            "Razones de liquidez":"Nada que comentar\nDe nuevo nada que comentar"}
+
+#_____________________________
 
 class PathAndResults:
     """Sustituye variables globales para paths y resultados."""
@@ -69,7 +69,7 @@ class ProgramaGui:
         self.root: tk.Tk = ttk.Window(themename="cosmo")    # Se define el atributo .root como una ventana de ttk (la raiz)
         self.root.geometry("920x560")    # Tamano inicial
         self.root.minsize(820, 500)    # Tamano minimo
-        self.root.configure(bg=COLORS["off_white"])    # Colores base de fondo
+        
 
         self.bg_file_var: Optional[tk.StringVar] = None
         self.er_file_var: Optional[tk.StringVar] = None
@@ -85,8 +85,7 @@ class ProgramaGui:
         
         # Se cambia el titulo de la ventana
         self.root.title(title)
-        self.root.configure(bg=COLORS["off_white"])
-
+        
         # Se borran todos los widgets de la ventana
         for child in self.root.winfo_children():
             child.destroy()
@@ -105,7 +104,7 @@ class ProgramaGui:
         outer.pack(fill="both", expand=True)
 
         # Definimos el frame del encabezado, donde solo rellena horizontalmente.
-        header = tk.Frame(outer, bg=COLORS["navy"], height=96)
+        header = tk.Frame(outer, height=96)
         header.pack(fill="x")
     
         # Titulo y subtitulo (dentro del encabezado)
@@ -114,7 +113,7 @@ class ProgramaGui:
 
         # Definimos frame que represente el borde del frame de contenido. Rellenando todo el espacio restante
         # (vertical y horizontal)
-        card_border = tk.Frame(outer, bg=COLORS["border"])
+        card_border = tk.Frame(outer)
         card_border.pack(fill="both", expand=True, pady=(18, 0))
 
         # Definimos el frame del contenido. Aqui se pondran los widgets especificos de cada ventana.
@@ -253,14 +252,14 @@ class ProgramaGui:
             self.er_file_var = tk.StringVar(value=self._selected_file_text(self.state.er_csv_path))
 
             # Definimos el frame que contendra al frame que contendra al panel de seleccion del .csv del balance general
-            bg_border = tk.Frame(content, bg=COLORS["border"])
+            bg_border = tk.Frame(content)
             
             # Definimos el frame que contendra el panel de seleccion de .csv del balance general, y lo generamos
             bg_panel = ttk.Frame(bg_border, padding=18)
             self._build_file_panel(bg_panel, "Balance General", self.bg_file_var, lambda: self._select_csv_file("BG"))
 
             # Frame del frame del panel de la seleccion .csv del estado de resultados
-            er_border = tk.Frame(content, bg=COLORS["border"])
+            er_border = tk.Frame(content)
             
             # Frame del panel y el panel de la seleccion del .csv del estado de resultados
             er_panel = ttk.Frame(er_border, padding=18)
@@ -302,7 +301,7 @@ class ProgramaGui:
             ttk.Label(content, text="Se usa el mismo diccionario de resultados, solo cambia el formato visual.", wraplength=760, justify="left").grid(row=1, column=0, columnspan=4, sticky="w", pady=(6, 16))
 
             # Crear contenedor de resultados
-            table_border = tk.Frame(content, bg=COLORS["border"])
+            table_border = tk.Frame(content)
             table_border.grid(row=2, column=0, columnspan=4, sticky="nsew", pady=(0, 24))
 
             # Definir frame del contenido de resultados dentro del contenedor de resultados
