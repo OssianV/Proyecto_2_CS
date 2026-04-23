@@ -145,7 +145,7 @@ class ProgramaGui:
         display_name = "Balance General" if file_type == "BG" else "Estado de Resultados"
 
         try:
-            path = askopenfilename(title=f"Escoge el archivo .csv de {display_name}", initialdir="../INPUTS", filetypes=[("CSV files", "*.csv")])
+            path = askopenfilename(title=f"Escoge el archivo .csv de {display_name}", filetypes=[("CSV files", "*.csv")])
 
             # Si no se selecciona archivo, no hace nada.
             if not path:
