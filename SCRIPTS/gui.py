@@ -22,8 +22,11 @@ def csv_validation(bg_path: str, er_path: str) -> Dict:
 
 # Esta funcion es para hacer los analisis automaticos de las razones financieras
 def auto_analysis(results_dict: dict) -> Dict:
-    return {"Razones de solvencia": "Tal y cual razon de solvencia esta muy alta\nTal y cual muy baja\nTal y cual en valores sanos para una aseguradora",
-            "Razones de liquidez":"Nada que comentar\nDe nuevo nada que comentar"}
+    return {"Liquidez":"Observacion_1\nObservacion_2\nObservacion_3",
+            "Solvencia y Apalancamiento": "Observacion_4\nObservacion_5\nObservacion_6",
+            "Suficiencia de la Prima": "Observacion_7\nObservacion_8\nObservacion_9",
+            "Reaseguro": "Observacion_10\nObservacion_11\nObservacion_12",
+            "Rentabilidad": "Observacion_13\nObservacion_14\nObservacion_15"}
 
 #_____________________________
 
@@ -70,7 +73,7 @@ class ProgramaGui:
         self.root.geometry("920x560")    # Tamano inicial
         self.root.minsize(820, 500)    # Tamano minimo
         
-
+        self.chosen_analysis_text = tk.StringVar()
         self.bg_file_var: Optional[tk.StringVar] = None
         self.er_file_var: Optional[tk.StringVar] = None
         
@@ -171,12 +174,46 @@ class ProgramaGui:
             return "No hay datos disponibles"
         return "\n".join(f"{key}: {value}" for key, value in data.items())
 
+    def update_results_display(self, chosen_analysis: tk.StringVar) -> None:
+        """Funcion para actualizar el texto de resultados cuando el tipo de analisis cambie"""
+        selected = chosen_analysis.get()
+
+        if selected == "Selecciona categoria de razon":
+            self.chosen_analysis_text.set("")
+        else:
+            self.chosen_analysis_text.set(auto_analysis(self.state.results)[selected])
+
+    @staticmethod
+    def chosen_analysis_values(results: Dict, chosen_analysis: tk.StringVar) -> Dict:
+        """Retorna un diccionario con los valores de las razones de la categoria seleccionada"""
+
+        prefix_analysis_map = {"Liquidez":"liq",
+                                "Solvencia y Apalancamiento": "sya",
+                                "Suficiencia de la Prima": "suf",
+                                "Reaseguro": "rea",
+                                "Rentabilidad": "ren"}
+        chosen_analysis_prefix = prefix_analysis_map[chosen_analysis.get()]
+        chosen_results = {key: value for key, value in results.items() if key[:3] == chosen_analysis_prefix}
+
+        return chosen_results
+
     def _build_file_panel(self, parent, title: str, file_var: tk.StringVar, command) -> None:
         """Panel visual para selección de un archivo CSV."""
         ttk.Label(parent, text=title).pack(anchor="w")    # Titulo del panel de seleecion de .csv
         ttk.Label(parent, text="Archivo seleccionado").pack(anchor="w", pady=(8, 4))
         ttk.Label(parent, textvariable=file_var, wraplength=300, justify="left").pack(anchor="w", pady=(0, 16))    # Archive seleccionado actualmente
         ttk.Button(parent, text="Seleccionar CSV", command=command, bootstyle=PRIMARY).pack(anchor="w")    # Boton para seleccionar archivo
+
+    def update_treeview(self, tree) -> None:
+        """Actualiza los valores del widget treeview dependiendo en el tipo de analisis escogido"""
+        tree.delete(*tree.get_children())
+
+        chosen_values = self.chosen_analysis_values(results=self.state.results, chosen_analysis=self.chosen_analysis)
+        if chosen_values:
+            for key, value in chosen_values.items():
+                tree.insert("", "end", values=(str(key), str(value)))
+        else:
+            tree.insert("", "end", values=("Sin datos", "No hay resultados disponibles"))
 
     def welcome_window(self) -> None:
         """Ventana de bienvenida al usuario."""
@@ -283,6 +320,23 @@ class ProgramaGui:
     def results_window(self) -> None:
         """Visualización de resultados."""
         try:
+            
+            # Verificar que se hayan seleccionado .csv's
+            if (self.state.bg_csv_path == None) | (self.state.er_csv_path == None):
+                self._show_info("Error", "Necesitas ingresar los .csv's del Balance General y el Estado de Resultados")
+                return
+            
+            # Verificar que los csv's hayan pasado la validacion
+            csv_validation_results = csv_validation(bg_path=self.state.bg_csv_path, er_path=self.state.er_csv_path)
+
+            validation_results = {}
+            for key, value in csv_validation_results.items():
+                if value[0] == False:
+                    validation_results[key]=value[1]
+
+            if validation_results:
+                self._show_error("Oops. Los archivos .csv no son validos",self._dict_to_string(validation_results))
+                return
 
             # Configurar ventana
             content = self._build_window_shell(
@@ -294,7 +348,7 @@ class ProgramaGui:
             # Configurar grid
             for col in range(4):
                 content.columnconfigure(col, weight=1)
-            content.rowconfigure(2, weight=1)    # Configuramos que la fila 2 (asociada al frame de resultados) se extienda verticalmente en todo el espacio sobrante.
+            content.rowconfigure(3, weight=1)    # Configuramos que la fila 2 (asociada al frame de resultados) se extienda verticalmente en todo el espacio sobrante.
 
             # Crear titulo y subtitulo
             ttk.Label(content, text="Resultados del cálculo").grid(row=0, column=0, columnspan=4, sticky="w")
@@ -302,7 +356,7 @@ class ProgramaGui:
 
             # Crear contenedor de resultados
             table_border = tk.Frame(content)
-            table_border.grid(row=2, column=0, columnspan=4, sticky="nsew", pady=(0, 24))
+            table_border.grid(row=3, column=0, columnspan=4, sticky="nsew", pady=(0, 24))
 
             # Definir frame del contenido de resultados dentro del contenedor de resultados
             table_frame = ttk.Frame(table_border, padding=0)
@@ -310,32 +364,31 @@ class ProgramaGui:
             table_frame.columnconfigure(0, weight=1)
             table_frame.rowconfigure(0, weight=1)
 
-            #ESTO PLANEO CAMBIARLO_________
-            tree = ttk.Treeview(table_frame, columns=("indicador", "valor"), show="headings", height=12)
+            # Define el widget Treeview para mostrar resultados
+            tree = ttk.Treeview(table_frame, columns=("indicador", "razon"), show="headings", height=12)
             tree.heading("indicador", text="Indicador")
-            tree.heading("valor", text="Valor")
+            tree.heading("razon", text="Razon")
             tree.column("indicador", width=420, anchor="w")
-            tree.column("valor", width=240, anchor="center")
+            tree.column("razon", width=240, anchor="center")
 
-            if self.state.results:
-                for key, value in self.state.results.items():
-                    tree.insert("", "end", values=(str(key), str(value)))
-            else:
-                tree.insert("", "end", values=("Sin datos", "No hay resultados disponibles"))
+            # Crear menu de opciones para seleccionar categoria de analisis y actualizar treeview
+            analysis_options = ["Liquidez", "Solvencia y Apalancamiento", "Suficiencia de la Prima", "Reaseguro", "Rentabilidad"]
+            self.chosen_analysis = tk.StringVar()
+            self.chosen_analysis.set("Selecciona categoria de razon")
+            analysis_menu = ttk.OptionMenu(content, self.chosen_analysis, "Selecciona categoria de razon", *analysis_options,  command=lambda _:self.update_treeview(tree))    # Falta modificar el chosen_analysis_text y definir un label para mostrarlo
+            analysis_menu.grid(row=2, column=0, columnspan=1, sticky="w", pady=(6, 16))
 
+            # Se agrega una scrollbar en el treeview
             scrollbar = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
             tree.configure(yscrollcommand=scrollbar.set)
-
             tree.grid(row=0, column=0, sticky="nsew")
             scrollbar.grid(row=0, column=1, sticky="ns")
-
-            #__________________________________
 
             # Boton siguiente y regresar
             back_button = ttk.Button(content, text="Regresar", command=self.start_window, bootstyle=(SECONDARY, OUTLINE))
             next_button = ttk.Button(content, text="Siguiente", command=self.dashboard_window, bootstyle=PRIMARY)
-            back_button.grid(row=3, column=0, sticky="w")
-            next_button.grid(row=3, column=3, sticky="e")
+            back_button.grid(row=4, column=0, sticky="w")
+            next_button.grid(row=4, column=3, sticky="e")
 
         except Exception as e:
             self._show_error(f"Error en la ventana de resultados: {str(e)}")
