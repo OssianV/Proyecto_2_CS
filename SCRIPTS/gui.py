@@ -243,7 +243,7 @@ class ProgramaGui:
             separator = ttk.Separator(content, orient="horizontal")
 
             # Button widgets
-            user_manual_button = ttk.Button(content, text="Manual de usuario", command=lambda: self._show_info("Manual de usuario", "Pendiente de implementar."), bootstyle=(WARNING, OUTLINE))
+            user_manual_button = ttk.Button(content, text="Manual de usuario", command=lambda: os.startfile("manual_de_usuario.pdf"), bootstyle=(WARNING, OUTLINE))
             next_button = ttk.Button(content, text="Siguiente", command=self.start_window, bootstyle=PRIMARY)
 
             # Wiidget positioning
