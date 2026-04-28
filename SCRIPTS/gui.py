@@ -9,6 +9,8 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import OUTLINE, PRIMARY, SECONDARY, WARNING
 
 from dashboard import build_dashboard
+from procesado_datos import process_data
+from razones import calcular_modulo_razones
 
 # Fuentes del texto de la GUI
 FONT_HEADER = ("Segoe UI Semibold", 18)
@@ -324,9 +326,10 @@ class ProgramaGui:
                 self._show_info("Error", "Necesitas ingresar los .csv's del Balance General y el Estado de Resultados")
                 return
             
-            # Verificar que los csv's hayan pasado la validacion
-            csv_validation_results = csv_validation(bg_path=self.state.bg_csv_path, er_path=self.state.er_csv_path)
+            # Se ejecuta la funcion de procesado de datos
+            bg_account_value_map, er_account_value_map, csv_validation_results = process_data(self.state.bg_csv_path, self.state.er_csv_path)
 
+            # Verificar que los csv's hayan pasado la validacion
             validation_results = {}
             for key, value in csv_validation_results.items():
                 if value[0] == False:
@@ -335,6 +338,9 @@ class ProgramaGui:
             if validation_results:
                 self._show_error("Oops. Los archivos .csv no son validos",self._dict_to_string(validation_results))
                 return
+
+            # Se ejecuta la funcion de calculo de razones financieras, y se actualiza el atributo asociado de la clase
+            self.state.results = calcular_modulo_razones(bg_account_value_map, er_account_value_map)
 
             # Configurar ventana
             content = self._build_window_shell(
