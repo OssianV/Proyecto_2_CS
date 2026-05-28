@@ -121,16 +121,15 @@ Para ver mas info, vean la [rubrica](/ATTACHMENTS/_pdf/PIA-Contabilidad%20de%20s
 ### Diego
 
 > MAIN: Excel
-> - [ ] Sacar manualmente los valores de los estados financieros del 2021 al 2025 de metlife
-> - [ ] Realizar proyeccion de ventas de los 12 meses de 2026
-> - [ ] Realizar proyeccion de ventas de los 12 meses de 2026
-> - [ ] Obtener la rentabilidad de la aseguradora en los ultimos 5 años y de las proyecciones que realizamos
+> - [x] Realizar proyeccion de ventas de los 12 meses de 2026
+> - [x] Realizar proyeccion de siniestros de los 12 meses de 2026
+> - [x] Obtener la rentabilidad de la aseguradora en los ultimos 5 años y de las proyecciones que realizamos
 > - [ ] Concluir sobre lo que se espera de la proyeccion de ventas y rentabilidad.
 
 ### Maria
 
 > MAIN: Excel
-> - [ ] Calcular las razones financieras de cada año (2021 - 2025) a partir de los datos de los estados financieros que saco Diego a mano.
+> - [ ] Calcular las razones financieras de cada año (2021 - 2025) a partir de los pdfs de los estados financieros de MetLife.
 > - [ ] Analizar los resultados de las razones financieras y proponer estrategias con el objetivo de mejorar rendimiento.
     - Pensar en que analisis se podrian hacer entre razones de diferentes categorias.
     - Pensar en como mostrar dichos analisis conjuntos (no en programar la GUI o dashboard, sino ideas de como mostrarlo).
