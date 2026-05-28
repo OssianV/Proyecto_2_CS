@@ -70,6 +70,41 @@ Para ver mas info, vean la [rubrica](/ATTACHMENTS/_pdf/PIA-Contabilidad%20de%20s
 - Manual de usuario y operacion del sistema (pdf): [manual_de_usuario.py](/ATTACHMENTS/_pdf/manual_de_usuario.pdf)
 - Documento con resultados del analisis (pdf): [PENDIENTE]()
 
+## Dashboard de razones final
+
+---
+
+Este dashboard es la versión final del proyecto para revisar las razones de MetLife entre 2021 y 2025.
+
+### Como correrlo?
+
+Desde la raíz del proyecto solo corran:
+
+`py .\SCRIPTS\run_metlife_dashboard.py`
+
+Asegurense de tener las siguientes librerias:
+
+- pandas
+- openpyxl
+- matplotlib
+- ttkbootstrap
+
+### Script principal
+
+El script principal es [SCRIPTS/run_metlife_dashboard.py](SCRIPTS/run_metlife_dashboard.py). Ese archivo carga los datos, valida el workbook y abre la interfaz.
+
+### Scripts usados en este dashboard
+
+- [SCRIPTS/run_metlife_dashboard.py](SCRIPTS/run_metlife_dashboard.py): punto de entrada del dashboard.
+- [SCRIPTS/metlife_dashboard_data.py](SCRIPTS/metlife_dashboard_data.py): lectura del Excel, limpieza de tablas y preparación de los datos.
+- [SCRIPTS/metlife_dashboard_app.py](SCRIPTS/metlife_dashboard_app.py): construcción de la ventana, pestañas, tarjetas, tablas y gráficas.
+
+### De que se encarga cada modulo?
+
+- `run_metlife_dashboard.py`: coordina la ejecución del dashboard.
+- `metlife_dashboard_data.py`: toma el Excel y lo convierte en datos listos para usar.
+- `metlife_dashboard_app.py`: muestra los datos en la interfaz gráfica.
+
 ## Segmentacion de avances
 
 ---
@@ -150,3 +185,6 @@ Para ver mas info, vean la [rubrica](/ATTACHMENTS/_pdf/PIA-Contabilidad%20de%20s
 - Para que aprendan a usar la funcion de "issues", solo vean [este video](https://www.youtube.com/watch?v=WMykv2ZMyEQ&list=PLRqwX-V7Uu6ZF9C0YMKuns9sLDzK6zoiV&index=4)
 - Lo basico de pandas lo pueden encontrar [aqui](https://pandas.pydata.org/docs/user_guide/index.html)
 - Para que entiendan como funciona la programacion modular vean [este short](https://www.youtube.com/shorts/Ju6tP03GI7c). Para que vean como se veria un modulo creado por ustedes muy sencillo vean [este video](https://www.youtube.com/watch?v=cgxEqlGJcrY). Cuando yo he usado modulos siempre defino clases, y funciones dentro de clases; si puueden hagan lo mismo, aunque como se ve en el ultimo video esto no es necesario.
+
+
+
